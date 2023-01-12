@@ -16,4 +16,7 @@ Cela ouvre les paramètres de configuration de la carte, il faut suivre les éta
 Tous les autres fonction et programme sont fait dans le docker_file qui est notre environnement virtuel.
 
 ### Fichier audio
+Le programme utilise un fichier audio qui permet d'enregistrer, celui-ci se trouve avec le code et doit se nommer enregistrement_audio.wav
+
 ### Rapport
+Le rapport et la présentation sont disponnible sur ce GitHub

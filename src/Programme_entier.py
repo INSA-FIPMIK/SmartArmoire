@@ -1,18 +1,12 @@
-#text = r.recognize_google(audio, language="fr-FR")
-
-#import library
-#import simpleaudio as sa
-#import simpleaudio.functionchecks as fc
-
+import pyaudio
+import wave
 import speech_recognition as sr
-#import sounddevice as sd
-#from scipy.io.wavfile import write
+
+from Audio import *
 
 import pyttsx3
-
 # initialize Text-to-speech engine test_audio
 engine = pyttsx3.init()
-
 
 #test_audio 2
 import gtts
@@ -34,87 +28,39 @@ Question3 = "Quelle est la réponse 3?"
 Question4 = "Quelle est la réponse 4?"
 Final = 'Vous avez répondu correctement, merci'
 
-def test_audio():
-    # initialize Text-to-speech engine
-    #engine = pyttsx3.init()
-    # convert this text to speech
-    text = "Python is a great programming language"
-
-    # setting new voice rate (faster)
-    engine.setProperty("rate", 300)
-    engine.say(text)
-    # play the speech
-    engine.runAndWait()
-
-def test_audio2():
-    # make request to google to get synthesis
-    tts = gtts.gTTS("Hello world", lang="fr")
-    # save the audio file
-    tts.save("hello.mp3")
-    # play the audio file
-    playsound("hello.mp3")
-
-def comprehension_audio(wave):
-    r = sr.Recognizer()
-    with sr.WavFile(wave) as source:
-        audio = r.record(source)
-        
-##    with sr.Microphone() as source:
-##        faire_audio(Debut_enregistrement)
-##        print("Dites quelque chose")
-##        audio = r.listen(source)
-        
-        texte = r.recognize_google(audio, language='fr-FR')
-        print("Retranscription: " + texte)
-        
-        """try:
-            texte = r.recognize_google(audio, language='fr-FR', show_all=False)
-            print('Transcription GOOGLE: ' + texte )
-        except LookupError:
-                print("L'audio n'as pas été compris")
-        except sr.UnknownValueError:
-            print("L'audio n'as pas été compris")
-        except sr.RequestError as e:
-            print("Le service Google Speech API ne fonctionne plus" + format(e))
-            """
-    return texte
-
-
-def faire_audio(nbr):
-    Audio_file = question(nbr)
-    
-    # utilisation Audio_file deja enregistré
-    # directly from WAV files on disk
-    wave_obj = sa.WaveObject.from_wave_file(Audio_file)   
-     
-    # Audio playback
-    play = wave_obj.play()
-               
-    # To stop after playing the whole audio
-    play.wait_done() 
-    play.stop()
-    
 def question(num_question):
     switch={
-       0: Bienvenu,
-       1: Question1,
-       2: Question2,
-       3: Question3,
-       4: Question4,
-       5: Final,
+       '0': Bienvenu,
+       '1': Question1,
+       '2': Question2,
+       '3': Question3,
+       '4': Question4,
+       '5': Final,
        }
-    return switch.get(num_question)
+    return switch.get(num_question,'Question en cours: ')
 
-def rep(num_question):
+def reponse_question(reponse):
     switch={
-       0: 'Bonjour',
-       1: 'truc',
-       2: 'singe',
-       3: 'rep3',
-       4: 'rep1',
-       5: 'merci',
+       '0': 'Bonjour',
+       '1': 'Question 1',
+       '2': 'Question 1',
+       '3': 'Question 1',
+       '4': 'Question 1',
        }
-    return switch.get(num_question)
+    return switch.get(num_question,'Question en cours: ')
+
+def commande(texte):
+    switch={
+       'Ouvrir porte 1': 11,
+       'Ouvrir porte 2': 12,
+       'Ouvrir porte 3': 13,
+       'Ouvrir porte 4': 14,
+       'Fermer porte 1': 21,
+       'Fermer porte 2': 22,
+       'Fermer porte 3': 23,
+       'Fermer porte 4': 24,
+       }
+    return switch.get(texte,'Emplacement: ')
 
 def verif(texte,nbr):
     ok = 0
@@ -136,12 +82,13 @@ def verif(texte,nbr):
 def debut():
     num_question = 0
     #Emission audio
-    #faire_audio(num_question)
-    test_audio()
+    SetAudio(num_question)
+    PlayAudio(num_question)
     #Enregistrement
-    WAVFILE = 'test3.wav'
+    #WAVFILE = 'test3.wav'
+    Enregistrer()
     # Test de comprehension fichier audio
-    texte = comprehension_audio(WAVFILE)
+    texte = Reco()
     print("fin debut")
 
 def QandR():
@@ -149,13 +96,13 @@ def QandR():
     num_question = 1
     while num_question < 5:
         #Emission audio
-        #faire_audio(num_question)
-        test_audio()
-        print("audio")
+        SetAudio(num_question)
+        PlayAudio(num_question)
+        print(num_question)
         #Enregistrement
-        WAVFILE = 'racailles.wav'
-        # Test de comprehension fichier audio
-        texte = comprehension_audio(WAVFILE)
+        Enregistrer()
+        # Comprehension audio
+        texte = Reco()
         #Detection avec phrase contient
         OK = verif(texte, num_question)
         if OK == 1:
@@ -170,11 +117,32 @@ def QandR():
             #A changer, possibilité de refaire la meme ou quitter
     return OK
 
+def ouvrir_porte(emplacement):
+    #controle moteur
+
+
+#Variable connexe
+ok = 0
+etape = 0
+
+#Debut du main
 debut()
-#ok = QandR()
+#Commande pour l'armoire
+Audio = question(etape)
+faire_audio(Audio)
+ok = QandR()
 
-
-##myrecording = sd.rec(int(seconds * fs), samplerate=fs, channels=2)
-##sd.wait()  # Wait until recording is finished
-##write('output.wav', fs, myrecording)  # Save as WAV file
-##
+while True:
+    texte = comprehension_audio()
+    emplacement = commande(texte)
+    etape = 1
+    if emplacement != 0:
+        #Question/Reponse pour debloquer l'armoire
+        ok = QR(etape)
+        #Ouverture
+        if ok == 1:
+            Ouvrir_porte(emplacement)
+            print('Porte ouverte')
+    if texte == "quitter":
+        print("Quitter")
+        break

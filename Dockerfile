@@ -42,6 +42,9 @@ RUN git clone https://github.com/NVIDIA-AI-IOT/jetcam \
 RUN git clone https://github.com/NVIDIA-AI-IOT/trt_pose \
     && cd trt_pose \
     && python3 setup.py install
+    
+RUN apt-get install ffmpeg
+    && apt-get install -y python3-pydub
 
 WORKDIR /menu/app
 

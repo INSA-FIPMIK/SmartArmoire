@@ -91,6 +91,40 @@ def PlayAudio(filename):
     audio.terminate()
     
 def Reco():  
+        #Afin de réusire à lire le fichier son pour la reconnaissance vocal
+    #il faut faire la même procédure que pour emettre un fichier
+    filename = 'enregistrement_audio.wav'
+    FORMAT = pyaudio.paInt16
+    CHANNELS = 2
+    RATE = 44100
+    CHUNK = 512 #1024
+
+    audio = pyaudio.PyAudio()
+    print("audio")
+    # Open the sound file 
+    wf = wave.open(filename, 'rb')
+
+    print("init")
+    # Open a .Stream object to write the WAV file to
+    # 'output = True' indicates that the sound will be played rather than recorded
+    stream = audio.open(format = FORMAT,
+                    channels = CHANNELS,
+                    output_device_index=11,
+                    rate = RATE,
+                    frames_per_buffer=CHUNK,
+                    output = True)
+
+    data = wf.readframes(CHUNK)
+
+    # Play the sound by writing the audio data to the stream
+    while len(data)>2:
+        #Commenter la ligne suivante permet de ne pas jouer le fichier
+        #stream.write(data)
+        data = wf.readframes(CHUNK)
+
+    # Close and terminate the stream
+    stream.close()
+    audio.terminate()
     rec_vocale = sr.Recognizer()
 
     fichier = "enregistrement_audio.wav", "fr-FR"
@@ -98,19 +132,15 @@ def Reco():
     with sr.AudioFile("enregistrement_audio.wav") as src: # Ouvre le fichier
 
         enregistrement = rec_vocale.record(src) # Donne a rec_vocale
-
-        texte = rec_vocale.recognize_google(enregistrement, language=fichier[1]) # Traduction
-
+        ok = False
+        while not ok:
+            try:
+                texte = rec_vocale.recognize_google(enregistrement, language=fichier[1]) # Traduction
+                ok = True
+            except:
+                print("Erreur pendant la transcription")
+                texte=" "
+                break
         print(texte) # Imprime texte
-                """try:
-            texte = r.recognize_google(audio, language='fr-FR', show_all=False)
-            print('Transcription GOOGLE: ' + texte )
-        except LookupError:
-                print("L'audio n'as pas été compris")
-        except sr.UnknownValueError:
-            print("L'audio n'as pas été compris")
-        except sr.RequestError as e:
-            print("Le service Google Speech API ne fonctionne plus" + format(e))
-            """
     return texte
 

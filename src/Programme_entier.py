@@ -30,24 +30,26 @@ Final = 'Vous avez répondu correctement, merci'
 
 def question(num_question):
     switch={
-       '0': Bienvenu,
-       '1': Question1,
-       '2': Question2,
-       '3': Question3,
-       '4': Question4,
-       '5': Final,
+       0: Debut_enregistrement,
+       1: Bienvenu,
+       2: Question1,
+       3: Question2,
+       4: Question3,
+       5: Question4,
+       6: Final,
        }
-    return switch.get(num_question,'Question en cours: ')
+    return switch.get(num_question)
 
 def reponse_question(reponse):
     switch={
-       '0': 'Bonjour',
-       '1': 'Question 1',
-       '2': 'Question 1',
-       '3': 'Question 1',
-       '4': 'Question 1',
+       0: 'Bonjour',
+       1: 'truc',
+       2: 'singe',
+       3: 'rep3',
+       4: 'rep1',
+       5: 'merci',
        }
-    return switch.get(num_question,'Question en cours: ')
+    return switch.get(num_question)
 
 def commande(texte):
     switch={
@@ -79,6 +81,31 @@ def verif(texte,nbr):
         ok = 0
     return ok
 
+def texte_cmd(texte):
+    if ('droite' and 'haut') in texte:
+        print("Correct")
+        cmd = 3
+    elif ('droite' and 'bas') in texte:
+        print("Correct")
+        cmd = 4
+    elif ('gauche' and 'haut') in texte:
+        print("Correct")
+        cmd = 5
+    elif ('gauche' and 'bas') in texte:
+        print("Correct")
+        cmd = 6
+    elif 'repeter' in texte:
+        print("repeter")
+        cmd = 1
+        cmd = debut()
+    elif 'quitter' in texte:
+        print("quitter")
+        cmd = 2
+    else:
+        print("Faux")
+        cmd = 0
+    return cmd
+
 def debut():
     num_question = 0
     #Emission audio
@@ -89,12 +116,14 @@ def debut():
     Enregistrer()
     # Test de comprehension fichier audio
     texte = Reco()
+    cmdPorte = texte_cmd(texte)
     print("fin debut")
+    return cmdPorte
 
 def QandR():
     #Debut
-    num_question = 1
-    while num_question < 5:
+    num_question = 2
+    while num_question < 6:
         #Emission audio
         SetAudio(num_question)
         PlayAudio(num_question)
@@ -117,32 +146,36 @@ def QandR():
             #A changer, possibilité de refaire la meme ou quitter
     return OK
 
-def ouvrir_porte(emplacement):
-    #controle moteur
+def Verif_Ouverture():
+    if capteur == 1:
+        ok = QandR()
+    else:
+        ok = 0   
+    return ok
 
+def cmd_MoteurOuvre(cmdPorte):
+    #ouverture selon cmdPorte
+
+def cmd_MoteurFerme(cmdPorte):
+    #fermeture selon cmdPorte
 
 #Variable connexe
 ok = 0
 etape = 0
 
-#Debut du main
-debut()
-#Commande pour l'armoire
-Audio = question(etape)
-faire_audio(Audio)
-ok = QandR()
+#Attente pression bouton
+while bouton == 1:
+    #attente
 
-while True:
-    texte = comprehension_audio()
-    emplacement = commande(texte)
-    etape = 1
-    if emplacement != 0:
-        #Question/Reponse pour debloquer l'armoire
-        ok = QR(etape)
-        #Ouverture
-        if ok == 1:
-            Ouvrir_porte(emplacement)
-            print('Porte ouverte')
-    if texte == "quitter":
-        print("Quitter")
-        break
+#lancement programme
+cmdPorte = debut()
+if cmdPorte =! 0:
+    #Si pas quitter
+    ok = Verif_Ouverture()
+    if ok ==1:
+        print("ouverture")
+        cmd_MoteurOuvre(cmdPorte)
+        while capteur == 1:
+            #attente enlever tiroir
+        print("fermeture")
+        cmd_MoteurFerme(cmdPorte)

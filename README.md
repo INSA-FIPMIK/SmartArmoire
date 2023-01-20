@@ -2,12 +2,14 @@
 
 ### Objectif
 ###### L’objectif du projet est de commander l’ouverture d’une armoire par la voix avec la contrainte de devoir répondre à un questionnaire pour pouvoir déverrouiller l’armoire.
+
 Ce github contient de quoi générer un environnement virtuel sur la Jetson contenant toutes les bibliothèques nécessaires. Les programmes sont dans src, les fichiers autres dans data. 
-###Dockerfile
+
+### Dockerfile
 Les instructions pour génerer l'environnement sont sur le github suivant:
 #### Created from https://github.com/nlpTRIZ/jetson_docker_X_forwarding
 Il faut cependant bien utiliser le fichier dokerfile et le requirement de ce github
-###Programme
+### Programme
 Le programmme principal s'appelle Programme entier.
 Une démonstration pour la partie interaction vocal a été faite sur le fichier Demo_echange_vocal.py
 
